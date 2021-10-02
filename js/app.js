@@ -1,4 +1,5 @@
 const startScreen = document.querySelector('#overlay');
+const title = document.querySelector('.title');
 const keyboard = document.querySelector('#qwerty');
 const phrase = document.querySelector('#phrase ul');
 const scoreboard = document.querySelector('#scoreboard ol');
@@ -61,8 +62,6 @@ function checkLetter(chosenLetter) {
             allLetters[i].classList.add( 'show' );
             letterCount++;
             letterFound.push( allLetters[i] );
-            // let letterFound = allLetters[i];
-            // return letterFound;
             }
         }
         if ( letterCount === 0 ) {
@@ -71,6 +70,34 @@ function checkLetter(chosenLetter) {
             return letterFound;
         }
     }
+
+/**
+ * This function checks to see if the player has won or lost the game, and displays the appropriate screen
+ *
+ * @returns {String} Changes the text, class and display value of the overlay page if player has won or lost
+ */
+
+    function checkWin() {
+    let show = 0;
+    let letter = 0;
+    for ( let i = 0; i < allLetters.length; i++ ) {
+        if ( allLetters[i].classList.contains('letter') ) {
+            letter++;
+        }
+        if ( allLetters[i].classList.contains('letter') && allLetters[i].classList.contains('show') ) {
+            show++;
+        }
+    }
+    if ( show === letter ) {
+        startScreen.className = 'win';
+        title.textContent = 'YOU WIN!';
+        startScreen.style.display = '';
+    } else if ( missed === 5 ) {
+        startScreen.className = 'lose';
+        title.textContent = 'YOU LOSE';
+        startScreen.style.display = '';
+    }
+}
 
 // Add event handler to 'Start Game' button, which will remove overlay
 
@@ -105,7 +132,9 @@ keyboard.addEventListener ( 'click', (e) => {
             
             // let lifeLost = hearts[missed - 1].children;
             // lifeLost[0].setAttribute( 'src', 'images/lostHeart.png' );
+
         }
+        checkWin();
     }
 });
 
