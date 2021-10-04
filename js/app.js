@@ -1,10 +1,17 @@
 const startScreen = document.querySelector('#overlay');
 const title = document.querySelector('.title');
+const reset = document.querySelector('.btn__reset');
 const keyboard = document.querySelector('#qwerty');
+const kRow1 = document.querySelector('#krow1');
+const kRow2 = document.querySelector('#krow2');
+const kRow3 = document.querySelector('#krow3');
 const phrase = document.querySelector('#phrase ul');
 const scoreboard = document.querySelector('#scoreboard ol');
 const allLetters = phrase.children;
 const hearts = scoreboard.children;
+const buttons1 = kRow1.children;
+const buttons2 = kRow2.children;
+const buttons3 = kRow3.children;
 let missed = 0;
 const phrases = [
     "A CAT HAS NINE LIVES",
@@ -91,24 +98,58 @@ function checkLetter(chosenLetter) {
     if ( show === letter ) {
         startScreen.className = 'win';
         title.textContent = 'YOU WIN!';
+        reset.textContent = 'Play Again!';
         startScreen.style.display = '';
     } else if ( missed === 5 ) {
         startScreen.className = 'lose';
         title.textContent = 'YOU LOSE';
+        reset.textContent = 'Play Again!';
         startScreen.style.display = '';
     }
 }
 
-// Add event handler to 'Start Game' button, which will remove overlay
+/**
+ * This function clears the keyboard and enables all keys
+ *
+ * @param {Array} arr - Accepts an array of keys
+ * @returns {Object} Removes the 'chosen' class and 'disabled' attributes of all keys 
+ */
+
+function clearKeyboard(arr) {
+    for ( let i = 0; i < arr.length; i++ ) {
+        if ( arr[i].classList.contains('chosen') ) {
+            arr[i].classList.remove('chosen');
+            arr[i].removeAttribute('disabled');
+        }
+    }
+}
+
+// An event handler to 'Start Game' button, which will remove overlay and 'Play Again!' button to restart the game
 
 startScreen.addEventListener ( 'click', (e) => {
     const startButton = e.target;
-    if (startButton.className === 'btn__reset') {
+    if (startButton.textContent === 'Start Game') {
+        startScreen.style.display = 'none';
+    } else if (startButton.textContent === 'Play Again!'){
+        const counter = allLetters.length;
+        for ( let i = 0; i < counter; i++ ) {
+            phrase.removeChild(allLetters[0]);
+        }
+        clearKeyboard(buttons1);
+        clearKeyboard(buttons2);
+        clearKeyboard(buttons3);
+        for ( let i = 0; i < 5; i++ ) {
+            let lifeGained = hearts[i].children;
+            lifeGained[0].setAttribute( 'src', 'images/liveHeart.png' );
+        }
+        missed = 0;
+        let randomPhrase = getRandomPhraseAsArray(phrases);
+        addPhraseToDisplay(randomPhrase);
         startScreen.style.display = 'none';
     }
 });
 
-// Add event handler to keys on keyboard, which will check players choices and accordingly either show letters or subtract lives
+// An event handler to keys on keyboard, which will check players choices and accordingly either show letters or subtract lives
 
 keyboard.addEventListener ( 'click', (e) => {
     let chosenLetter = e.target;
